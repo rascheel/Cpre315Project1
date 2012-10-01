@@ -1,21 +1,26 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include<cstdlib>
 #include <cstddef>
 #include <cstdio>
-
+#include<unordered_map>
+using namespace std;
 class Node
 {
 public:
-	Node * zero = NULL;//This is a binary tree so it's edges are either labeled zero or one
-	Node * one = NULL;
+	Node * zero;//This is a binary tree so it's edges are either labeled zero or one
+	Node * one;
 
 	char symbol;
 	double frequency;
 
+	Node(Node * _zero, Node * _one);
 	Node();
 	Node(char _symbol, double _frequency);
 	~Node();
+	
+	void createPrefixTable(unordered_map<char, char*> * prefixTable, char * prevString, int depth);
 
 	double getFrequency();
 

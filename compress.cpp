@@ -5,6 +5,10 @@
 #include<queue>
 using namespace std;
 
+
+Node Huffman(priority_queue<Node, vector<Node>, Node::Comparator> queue);
+void writeBit(bool bit, FILE * fileToWrite, bool flush=0);
+
 int main()
 {
 	//cout << "hello" << endl;
@@ -45,21 +49,36 @@ int main()
 		iterator++;
 	}
 
-	double what = 0;
-	printf("-----------------------------ORDERED---------------------------------\n");
-	while(!queue.empty())
-	{
-		Node tmpNode = queue.top();
-		printf("%c: %f\%\n", tmpNode.symbol, 100*tmpNode.getFrequency());
-		what += tmpNode.getFrequency();
-		queue.pop();
-	}
-	printf("total percent = %f\%\n", 100*what);
+//	double what = 0;
+	//printf("-----------------------------ORDERED---------------------------------\n");
+	//while(!queue.empty())
+	//{
+	//	Node tmpNode = queue.top();
+//		printf("%c: %f\%\n", tmpNode.symbol, 100*tmpNode.getFrequency());
+//		what += tmpNode.getFrequency();
+//		queue.pop();
+//	}
+//	printf("total percent = %f\%\n", 100*what);
 	
+	Node prefixTree = Huffman(queue);
 
-		
+	unordered_map<char, char*> prefixTable;
 
+	prefixTree.createPrefixTable(&prefixTable, NULL, 0);
 
+	FILE * fileToWrite = fopen("output.enc", "w+");
+
+	writeBit(0,fileToWrite);
+	writeBit(1,fileToWrite);
+	writeBit(0,fileToWrite);
+	writeBit(0,fileToWrite);
+	writeBit(1,fileToWrite);
+	writeBit(0,fileToWrite);
+	writeBit(0,fileToWrite);
+	writeBit(1,fileToWrite);
+	writeBit(1,fileToWrite, 1);
+
+	fclose(fileToWrite);
 	return 0;
 }
 
@@ -67,7 +86,11 @@ Node Huffman(priority_queue<Node, vector<Node>, Node::Comparator> queue)
 {
 	if(queue.size() == 2)
 	{
-		
+		Node y = queue.top();
+		queue.pop();
+		Node z = queue.top();
+		queue.pop();
+		return Node(&y, &z);
 	}
 	else
 	{
@@ -75,14 +98,36 @@ Node Huffman(priority_queue<Node, vector<Node>, Node::Comparator> queue)
 		queue.pop();
 		Node z = queue.top();
 		queue.pop();
-
-		Node yz = Node();
-		yz.zero = &y;
-		yz.one = &z;
+		Node yz = Node(&y, &z);
 
 		queue.push(yz);
 
 		Node Tprime = Huffman(queue);
 		
-		Node T = 
+		return Tprime;
+	} 
+}
+
+void writeBit(bool bit, FILE * fileToWrite, bool flush)
+{
+	static char byte = 0;
+	static int bits = 0;
+	if(bit)
+	{
+		byte = byte | (1 << bits);
+		bits++;
+	}
+	else
+	{
+		byte = byte | (0 << bits);
+		bits++;
+	}
+
+	if(bits == 8 || flush)
+	{
+		fputc((char)byte, fileToWrite);
+		byte = 0;
+		bits = 0;
+	}
+
 }
