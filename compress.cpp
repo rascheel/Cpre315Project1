@@ -9,6 +9,7 @@ using namespace std;
 Node Huffman(priority_queue<Node, vector<Node>, Node::Comparator> queue);
 void writeBit(bool bit, FILE * fileToWrite, bool flush=0);
 
+
 int main()
 {
 	//cout << "hello" << endl;
@@ -62,10 +63,22 @@ int main()
 	
 	Node prefixTree = Huffman(queue);
 
-	unordered_map<char, char*> prefixTable;
+	unordered_map<char, prefix> prefixTable;
 
 	prefixTree.createPrefixTable(&prefixTable, NULL, 0);
 
+	unordered_map<char, prefix>::iterator iteratorPT = prefixTable.begin();
+	while(iteratorPT != prefixTable.end())
+	{
+		//printf("%c: %i\n", iterator->first, iterator->second);
+		printf("%c: ", iteratorPT->first);
+		for(int i = 0; i < iteratorPT->second.bitLength; i++)
+		{
+			printf("%c", iteratorPT->second.prefix[i]);
+		}
+		printf("\n");
+		iteratorPT++;
+	}
 	FILE * fileToWrite = fopen("output.enc", "w+");
 
 	writeBit(0,fileToWrite);
@@ -86,19 +99,23 @@ Node Huffman(priority_queue<Node, vector<Node>, Node::Comparator> queue)
 {
 	if(queue.size() == 2)
 	{
-		Node y = queue.top();
+		Node * y = (Node*)malloc(sizeof(Node));
+		*y = queue.top();
 		queue.pop();
-		Node z = queue.top();
+		Node * z = (Node*)malloc(sizeof(Node));
+		*z = queue.top();
 		queue.pop();
-		return Node(&y, &z);
+		return Node(y, z);
 	}
 	else
 	{
-		Node y = queue.top();
+		Node * y = (Node*)malloc(sizeof(Node));
+		*y = queue.top();
 		queue.pop();
-		Node z = queue.top();
+		Node * z = (Node*)malloc(sizeof(Node));
+		*z = queue.top();
 		queue.pop();
-		Node yz = Node(&y, &z);
+		Node yz = Node(y, z);
 
 		queue.push(yz);
 

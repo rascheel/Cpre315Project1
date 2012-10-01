@@ -6,6 +6,13 @@
 #include <cstdio>
 #include<unordered_map>
 using namespace std;
+
+typedef struct prefix
+{
+	char * prefix;
+	int bitLength;
+};
+
 class Node
 {
 public:
@@ -20,7 +27,7 @@ public:
 	Node(char _symbol, double _frequency);
 	~Node();
 	
-	void createPrefixTable(unordered_map<char, char*> * prefixTable, char * prevString, int depth);
+	void createPrefixTable(unordered_map<char, prefix> * prefixTable, char * prevString, int depth);
 
 	double getFrequency();
 

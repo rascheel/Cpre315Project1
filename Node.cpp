@@ -50,15 +50,18 @@ bool Node::Comparator::operator()(Node& lhs, Node& rhs) const
 	return lhs.getFrequency() > rhs.getFrequency();
 }
 
-void Node::createPrefixTable(unordered_map<char, char*> * prefixTable, char * prevString, int depth)
+void Node::createPrefixTable(unordered_map<char, prefix> * prefixTable, char * prevString, int depth)
 {
-	printf("before if/elses\n");
-	fflush(stdout);
+	//printf("before if/elses %x %x\n", zero, one);
+	//fflush(stdout);
 	if(zero == NULL && one == NULL)
 	{
-		printf("in if\n");
-		fflush(stdout);
-		prefixTable->insert(pair<char, char*>(symbol, prevString));
+		//printf("in if\n");
+		//fflush(stdout);
+		prefix pfixToInsert;
+		pfixToInsert.prefix = prevString;
+		pfixToInsert.bitLength = depth;
+		prefixTable->insert(pair<char, prefix>(symbol, pfixToInsert));
 	}
 	else if(zero == NULL)
 	{
@@ -72,33 +75,33 @@ void Node::createPrefixTable(unordered_map<char, char*> * prefixTable, char * pr
 	}
 	else
 	{
-		char * zeroString = (char*)malloc(sizeof(char)*depth+1);
-		printf("depth %i\n", depth);
-		fflush(stdout);
+		char * zeroString = (char*)malloc(sizeof(char)*(depth+1));
+		//printf("depth %i\n", depth);
+		//fflush(stdout);
 		for(int i = 0; i < depth; i++)
 		{
 			zeroString[i] = prevString[i];
 		}
-		printf("after loop zero\n", depth);
-		fflush(stdout);
-		zeroString[depth] = 0;
-		printf("after assigning new zero, %x %x\n", zero, one);
-		fflush(stdout);
+		//printf("after loop zero\n", depth);
+		//fflush(stdout);
+		zeroString[depth] = '1';
+		//printf("after assigning new zero, %x %x\n", zero, one);
+		//fflush(stdout);
 		zero->createPrefixTable(prefixTable, zeroString, depth+1);
 
-		printf("depth %i\n", depth);
-		fflush(stdout);
+		//printf("depth %i\n", depth);
+		//fflush(stdout);
 
-		char * oneString = (char*)malloc(sizeof(char)*depth+1);
+		char * oneString = (char*)malloc(sizeof(char)*(depth+1));
 		for(int i = 0; i < depth; i++)
 		{
 			oneString[i] = prevString[i];
 		}
-		printf("after loop one\n", depth);
-		fflush(stdout);
-		oneString[depth] = 0;
-		printf("after assigning new one\n");
-		fflush(stdout);
+		//printf("after loop one\n", depth);
+		//fflush(stdout);
+		oneString[depth] = '0';
+		//printf("after assigning new one\n");
+		//fflush(stdout);
 		one->createPrefixTable(prefixTable, oneString, depth+1);
 		free((void*)prevString);
 	}
